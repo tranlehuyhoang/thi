@@ -1,3 +1,3 @@
 <script type="text/javascript">
-location.href = './client/show.php';
+    location.href = './client/product.php';
 </script>

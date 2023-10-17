@@ -62,9 +62,44 @@ class User
             return $alert;
         }
     }
+    public function getUser($id)
+    {
 
+        $query = "SELECT * FROM users WHERE id = '$id' ";
+        $result = $this->db->select($query);
+        return $result;
+    }
     public function logout()
     {
         unset($_SESSION['user_id']);
+    }
+    public function updateUser($id, $data)
+    {
+        $name = mysqli_real_escape_string($this->db->link, $data['name']);
+        $email = mysqli_real_escape_string($this->db->link, $data['email']);
+        $password = mysqli_real_escape_string($this->db->link, md5($data['password']));
+
+        // Kiểm tra xem email đã tồn tại trong cơ sở dữ liệu chưa (loại trừ email của người dùng hiện tại)
+        $checkQuery = "SELECT * FROM users WHERE email = '$email' AND id != '$id'";
+        $checkResult = $this->db->select($checkQuery);
+
+        if ($checkResult) {
+            $alert = "400";
+            return $alert;
+        }
+
+        // Tiếp tục cập nhật thông tin người dùng
+        $query = "UPDATE users SET name = '$name', email = '$email', password = '$password' WHERE id = '$id'";
+        $result = $this->db->update($query);
+
+        if ($result) {
+            $alert = "200";
+            echo "<script>window.location.href = './product.php';</script>";
+
+            return $alert;
+        } else {
+            $alert = "404";
+            return $alert;
+        }
     }
 }
